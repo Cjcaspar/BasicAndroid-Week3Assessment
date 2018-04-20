@@ -22,6 +22,8 @@ import butterknife.OnClick;
 
 public class AccountFragment extends Fragment {
 
+    private CallbackClass callback;
+
     @BindView(R.id.name_input)
     protected EditText nameInput;
 
@@ -30,7 +32,21 @@ public class AccountFragment extends Fragment {
 
     @OnClick(R.id.button_finish)
     protected void onFinishButtonClicked(View view) {
+        String nameString = nameInput.getText().toString();
+        String accountRole = classInput.getText().toString();
+        if (nameString.length() <= 0 &&
+                accountRole.length() <= 0) {
 
+            showAlertDialog(getString(R.string.include_all));
+
+        } else if (!accountRole.equalsIgnoreCase("mage") &&
+                !accountRole.equalsIgnoreCase("archer") &&
+                !accountRole.equalsIgnoreCase("warrior")) {
+            showAlertDialog(getString(R.string.class_incorrect));
+        } else {
+            Account account = new Account(nameString, accountRole);
+            callback.createAccount(account);
+        }
     }
 
 
@@ -71,5 +87,17 @@ public class AccountFragment extends Fragment {
                 })
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .show();
+    }
+
+    public void setCallback(CallbackClass callback) {
+        this.callback = callback;
+    }
+
+//    private void createAccount(Account account) {
+//        callback.createAccount(account);
+//    }
+
+    public interface CallbackClass {
+        void createAccount(Account account);
     }
 }
